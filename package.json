@@ -1,0 +1,23 @@
+{
+  "name": "node_js_okten",
+  "version": "1.0.0",
+  "dependencies": {
+    "express": "^4.18.2",
+    "joi": "^17.7.0"
+  },
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gulchizxvr/node_js_okten.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gulchizxvr/node_js_okten/issues"
+  },
+  "homepage": "https://github.com/gulchizxvr/node_js_okten#readme",
+  "description": ""
+}
