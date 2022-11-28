@@ -1,8 +1,8 @@
 const express = require('express')
+const {fileService} = require("./services")
 
 const app = express()
 
-const userDB = require('./database/users')
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -23,44 +23,62 @@ app.get('/', (req, res) => {
 })
 
 
-app.get('/users', (req, res) => {
-    res.json(userDB)
+app.get('/users', async (req, res) => {
+    const users = await fileService.reader()
+    res.json(users)
 })
 
-app.get('/user/:id', (req, res) => {
+app.get('/user/:id', async (req, res) => {
     const {id} = req.params
 
-    if (id < userDB.length) {
-        res.json(userDB[id])
-    } else {
-        res.json("No find")
+    const users = await fileService.reader()
+    const index = users.findIndex((user) => user.id === +id)
+
+    if (index !== -1) {
+        const user = users[index]
+        return res.json(user)
     }
 
+    res.status(404).json('Not found')
 })
 
-app.post('/users', (req, res) => {
+app.post('/users', async (req, res) => {
 
     const userInfo = req.body
-    const {error,value} = user.validate(userInfo)
+    const {error, value} = user.validate(userInfo)
 
     if (!error) {
-        userDB.push(value)
-        res.json(`Created user ${value.name}`)
-    } else {
-        res.json("enter username and age")
+        const users = await fileService.reader()
+
+        const newUser = {
+            name: value.name,
+            age: value.age,
+            id: users.length ? +users[users.length - 1].id + 1 : 1
+        }
+
+        users.push(newUser)
+        await fileService.writer(users)
+
+        return res.json(`Created user ${value.name}`)
     }
+
+        res.json("enter username and age")
 })
 
-app.delete('/user/:id', (req, res) => {
+app.delete('/user/:id', async (req, res) => {
 
     const {id} = req.params
 
-    if (id < userDB.length) {
-        res.json(`Delete user with name ${userDB[id]?.name}`)
-        userDB.splice(id, 1)
-    } else {
-        res.json("Error. Write valid number")
+    const users = await fileService.reader()
+
+    const index = users.findIndex((user) => user.id === +id)
+
+    if (index !== -1) {
+        res.json(`Delete user with name ${users[index]?.name}`)
+        users.splice(index, 1)
+        await fileService.writer(users)
     }
+        res.json("Error. Write valid number")
 })
 
 
