@@ -34,12 +34,13 @@ app.get('/user/:id', async (req, res) => {
     const users = await fileService.reader()
     const index = users.findIndex((user) => user.id === +id)
 
-    if (index !== -1) {
-        const user = users[index]
-        return res.json(user)
+
+    if (index === -1) {
+        return res.status(404).json('Not found')
     }
 
-    res.status(404).json('Not found')
+    const user = users[index]
+    res.json(user)
 })
 
 app.post('/users', async (req, res) => {
@@ -47,22 +48,24 @@ app.post('/users', async (req, res) => {
     const userInfo = req.body
     const {error, value} = user.validate(userInfo)
 
-    if (!error) {
-        const users = await fileService.reader()
-
-        const newUser = {
-            name: value.name,
-            age: value.age,
-            id: users.length ? +users[users.length - 1].id + 1 : 1
-        }
-
-        users.push(newUser)
-        await fileService.writer(users)
-
-        return res.json(`Created user ${value.name}`)
+    if (error) {
+        return res.json("enter username and age")
     }
 
-        res.json("enter username and age")
+    const users = await fileService.reader()
+
+    const newUser = {
+        name: value.name,
+        age: value.age,
+        id: users.length ? +users[users.length - 1].id + 1 : 1
+    }
+
+    users.push(newUser)
+    await fileService.writer(users)
+
+    res.json(`Created user ${value.name}`)
+
+
 })
 
 app.delete('/user/:id', async (req, res) => {
@@ -73,12 +76,15 @@ app.delete('/user/:id', async (req, res) => {
 
     const index = users.findIndex((user) => user.id === +id)
 
-    if (index !== -1) {
-        res.json(`Delete user with name ${users[index]?.name}`)
-        users.splice(index, 1)
-        await fileService.writer(users)
+    if (index === -1) {
+        return res.json("Error. Write valid number")
     }
-        res.json("Error. Write valid number")
+
+    res.json(`Delete user with name ${users[index]?.name}`)
+    users.splice(index, 1)
+    await fileService.writer(users)
+
+
 })
 
 
