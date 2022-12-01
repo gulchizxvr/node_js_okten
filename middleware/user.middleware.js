@@ -10,7 +10,7 @@ module.exports = {
             const users = await fileService.reader()
             const user = users.find((user) => user.id === +userId)
             if (!user) {
-                throw new ApiError('Check what you writing', 404)
+                throw new ApiError('User with this id don`t exist', 404)
             }
 
             req.users = users
@@ -29,9 +29,20 @@ module.exports = {
             if (!age || age < 0 || Number.isNaN(+age)) {
                 throw new ApiError('Wrong age', 400)
             }
-
             next()
         } catch (e) {
+            next(e)
+        }
+    },
+    isIdValid: (req, res, next) => {
+        try {
+            const {userId} = req.params
+            if (!userId || Number.isNaN(+userId) || +userId < 0) {
+                throw new ApiError('Wrong id', 404)
+            }
+            next()
+        } catch
+            (e) {
             next(e)
         }
     }
