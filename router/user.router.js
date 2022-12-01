@@ -7,7 +7,7 @@ router.get(
     '/',
     controller.getAllUser)
 
-router.put(
+router.post(
     '/',
     mdlwr.isBodyValidCreate,
     controller.createUser)
@@ -25,9 +25,10 @@ router.delete(
     mdlwr.checkIsUserExist,
     controller.deleteUser)
 
-router.post(
+router.put(
     '/:userId',
     mdlwr.isIdValid,
+    mdlwr.isBodyValidUpdate,
     mdlwr.checkIsUserExist,
     controller.updateUser)
 

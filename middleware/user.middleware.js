@@ -12,7 +12,6 @@ module.exports = {
             if (!user) {
                 throw new ApiError('User with this id don`t exist', 404)
             }
-
             req.users = users
             req.user = user
             next()
@@ -28,6 +27,20 @@ module.exports = {
             }
             if (!age || age < 0 || Number.isNaN(+age)) {
                 throw new ApiError('Wrong age', 400)
+            }
+            next()
+        } catch (e) {
+            next(e)
+        }
+    },
+    isBodyValidUpdate: (req, res, next) => {
+        try {
+            const {name, age} = req.body
+            if (name && (name.length < 3 || typeof name !== "string")) {
+                throw new ApiError('You write wrong name', 400)
+            }
+            if (age && (age < 0 || Number.isNaN(+age))) {
+                throw new ApiError('You write wrong age', 400)
             }
             next()
         } catch (e) {
