@@ -35,34 +35,32 @@ module.exports = {
             next(e)
         }
     },
-    deleteUser: async (req,res,next) => {
+    deleteUser: async (req, res, next) => {
         try {
-            const {user,users} = req
-            const index = users.findIndex((u)=> u.id === user.id)
+            const {user, users} = req
+            const index = users.findIndex((u) => u.id === user.id)
 
-            users.splice(index,1)
+            users.splice(index, 1)
 
             await fileService.writer(users)
             res.sendStatus(204)
 
-        }
-        catch (e) {
+        } catch (e) {
             next(e)
         }
     },
-    updateUser: async (req,res,next) => {
+    updateUser: async (req, res, next) => {
         try {
-            const {user,users,body} = req
-            const index = users.findIndex((u)=> u.id === user.id)
+            const {user, users, body} = req
+            const index = users.findIndex((u) => u.id === user.id)
 
-            users[index] = {...users[index],...body}
+            users[index] = {...users[index], ...body}
 
             await fileService.writer(users)
             res.status(201).json(users[index])
 
-        }
-        catch (e) {
-
+        } catch (e) {
+            next(e)
         }
     }
 
